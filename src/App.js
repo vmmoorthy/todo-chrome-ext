@@ -1,23 +1,111 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="titleAppContainer"></div>
+      <div className="innerContainer">
+        <div className="todoStatus">
+          <div className="titleHead">On progress</div>
+          <div className="todo-list-container">
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="todoStatus active">
+          <div className="titleHead">On progress</div>
+          <div className="todo-list-container">
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="todoStatus">
+          <div className="titleHead">On progress</div>
+          <div className="todo-list-container">
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+            <div className="todo-container">
+              <div className="left">
+                <div className="todo-head">The title</div>
+                <div className="todo-desc">The description...</div>
+              </div>
+              <div className="right">
+                <div className="time">00:09</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="todoStatus"></div>
+        <div className="todoStatus"></div>
+        <div className="todoStatus"></div>
+        
+      </div>
     </div>
   );
 }
