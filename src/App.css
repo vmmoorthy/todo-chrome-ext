@@ -1,5 +1,5 @@
 .app {
-    background-color: #242222;
+    background-color: #222222;
     width: 100vw;
     height: 100vh;
 }
@@ -10,7 +10,6 @@
 }
 
 .innerContainer {
-    min-height: 80vh;
     width: 100%;
     margin: auto;
     display: grid;
@@ -25,15 +24,22 @@
 
 .todoStatus {
     background-color: rgb(212, 185, 185);
+    min-height: 60vh;
+    max-height: 80vh;
+    margin-top: 2rem;
+    height: fit-content;
     min-width: 25rem;
     width: 30%;
     padding: 2%;
     border-radius: 20px;
-    /* margin-right: 10px; */
-    /* /* display: flex; */
-    /* flex-direction: column; */
-    /* justify-content: center; */
-    /* align-items: center; */
+}
+
+.active {
+    background: #69F836;
+    min-height: 80vh;
+    margin-top: 0;
+    min-width: 30rem;
+    border: 8px solid #5B6BF4;
 }
 
 .titleHead {
@@ -42,7 +48,9 @@
 }
 
 .todo-list-container {
-    margin-top: 15%;
+    margin-top: 10%;
+    overflow: auto;
+    max-height: 30rem;
 }
 
 .todo-container {
@@ -52,14 +60,16 @@
     margin-bottom: 5%;
 }
 
-.active {
-    background: #69F836;
-    border: 8px solid #5B6BF4;
-}
-
 .todo-head {
     font-size: 32px;
     font-weight: 400;
+}
+
+.overflow-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 18rem;
+    text-overflow: ellipsis;
 }
 
 .todo-desc {
