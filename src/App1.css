@@ -1,0 +1,83 @@
+.app {
+    background-color: #222222;
+    width: 100vw;
+    height: 100vh;
+}
+
+.titleAppContainer {
+    min-height: 5rem;
+    /* background-color: bisque; */
+}
+
+.innerContainer {
+    width: 100%;
+    margin: auto;
+    display: grid;
+    grid-auto-flow: column;
+    padding: 1%;
+    column-gap: 10px;
+    /* flex: 1; */
+    /* flex-wrap: nowrap; */
+    /* justify-content: flex-start; */
+    overflow: auto;
+}
+
+.todoStatus {
+    background-color: rgb(212, 185, 185);
+    min-height: 60vh;
+    max-height: 80vh;
+    margin-top: 2rem;
+    height: fit-content;
+    min-width: 25rem;
+    width: 30%;
+    padding: 2%;
+    border-radius: 20px;
+}
+
+.active {
+    background: #69F836;
+    min-height: 80vh;
+    margin-top: 0;
+    min-width: 30rem;
+    border: 8px solid #5B6BF4;
+}
+
+.titleHead {
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.todo-list-container {
+    margin-top: 10%;
+    overflow: auto;
+    max-height: 30rem;
+}
+
+.todo-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 5%;
+}
+
+.todo-head {
+    font-size: 32px;
+    font-weight: 400;
+}
+
+.overflow-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 18rem;
+    text-overflow: ellipsis;
+}
+
+.todo-desc {
+    font-size: 22px;
+    font-weight: 400;
+}
+
+.time {
+    font-size: 32px;
+    font-weight: 500;
+}
