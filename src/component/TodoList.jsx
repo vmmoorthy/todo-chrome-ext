@@ -9,12 +9,8 @@ const TodoList = () => {
             v = 3;
         return v + 1;
     }
-    const [lfocus, setLfocus] = useState(0);
-    const getFocus = () => {
-        // let el = ;
-        // el.focus();
-
-    }
+    const [lfocus, setLfocus] = useState(-1);
+    
     return (
         <div className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
             {todo.map((item, index) => (
