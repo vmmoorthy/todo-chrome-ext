@@ -4,14 +4,14 @@
     box-sizing: border-box;
 }
 
-.list {
-    /* display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; */
-    
-}
 
-.list>* {
-    /* margin: 10px; */
+/* .todoContainer:hover {} */
+.addToolsModel,.blockOptions {
+    visibility: hidden;
+}
+.todoContainer:hover>.addToolsModel {
+    visibility: visible;
+}
+.todoContainerWraper:hover>.blockOptions{
+    visibility: visible;
 }
