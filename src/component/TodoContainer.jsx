@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import Text from "./Text";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
+
+
+export const todoListSetstateContext = createContext([]);
 
 const TodoContainer = ({ val }) => {
 
@@ -12,15 +15,21 @@ const TodoContainer = ({ val }) => {
         list: [{
             type: "text",// text||todo||pic||aud||video
             content: "",
+            uuid: uuidv4(),
         },
         {
+            uuid: uuidv4(),
             type: "todo",
             content: [{
+                uuid: uuidv4(),
                 todo: "",
                 status: false
             }],
         }],
     });
+
+
+
 
     const addElement = (ele) => {
         if (ele === "notes") {
@@ -28,13 +37,16 @@ const TodoContainer = ({ val }) => {
                 ...p, list: [...p.list, {
                     type: "text",
                     content: "",
+                    uuid: uuidv4(),
                 },]
             }))
         } else if (ele === "checkBox") {
             setTodo(p => ({
                 ...p, list: [...p.list, {
                     type: "todo",
+                    uuid: uuidv4(),
                     content: [{
+                        uuid: uuidv4(),
                         todo: "",
                         status: false
                     }],
@@ -43,6 +55,7 @@ const TodoContainer = ({ val }) => {
 
         }
     }
+
 
 
     return (
@@ -77,23 +90,25 @@ const TodoContainer = ({ val }) => {
                 <TextInput cb={v => setTodo(p => ({ ...p, title: v }))} title={todo.title} />
 
                 {/* <div className="listContainer"> */}
-                <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
-                    {todo.list.map((item, index) => {
-                        if (item.type === "text") return <Text key={index} />
-                        else if (item.type === "todo") return <TodoList key={index} />
-                        else return <h1 className="text-white">Something went Wrong</h1>
-                    })}
+                <todoListSetstateContext.Provider value={setTodo}>
+                    <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
+                        {todo.list.map((item) => {
+                            if (item.type === "text") return <Text item={item} key={item.uuid} />
+                            else if (item.type === "todo") return <TodoList item={item} key={item.uuid} />
+                            else return <h1 className="text-white">Something went Wrong</h1>
+                        })}
 
-                    {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
+                        {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
                 <Audio />
                 <Video /> */}
-                    {/* <div className="text"></div>
+                        {/* <div className="text"></div>
                 <div className="todoList"></div>
                 <div className="pic"></div>
                 <div className="aud"></div>
                 <div className="vid"></div> */}
 
-                </div>
+                    </div>
+                </todoListSetstateContext.Provider>
                 {/* </div> */}
             </div>
         </div>

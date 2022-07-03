@@ -1,4 +1,8 @@
-const BlockOptions = () => {
+import { useContext } from "react";
+import { todoListSetstateContext } from "./TodoContainer";
+
+const BlockOptions = ({ item }) => {
+    const todoSetState = useContext(todoListSetstateContext)
     return (
         <div contentEditable={false} className="blockOptions grid grid-flow-col items-end absolute z-10  top-[-1rem] w-full ">
             <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] pined w-6 p-1 h-6 bg-[#6A1B4D] rounded">
@@ -16,8 +20,8 @@ const BlockOptions = () => {
 
             </div>
             <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-h-6 whitespace-nowrap p-1 rounded bg-[#6A1B4D] ">05 Jun 2020 18:45PM</div>
-            <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] remove w-6 p-1 h-min bg-[#6A1B4D] rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img"  preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
+            <div onClick={() => todoSetState(p => ({ ...p, list: p.list.filter(todoli => todoli.uuid !== item.uuid) }))} className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] remove w-6 p-1 h-min bg-[#6A1B4D] rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
             </div>
         </div>
     );

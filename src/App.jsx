@@ -14,19 +14,22 @@ const App = () => {
 
     const [page, setPage] = useState("notes");
     const [scrollLeft, setScrollLeft] = useState(false);
-    const [todos, setTodos] = useState([{ //master model for todo list
+    const [todos, setTodos] = useState(() => [{ //master model for todo list
         title: "",
         uuid: uuidv4(),
         list: [
             {
                 type: "text",// text||todo||pic||aud||video
                 content: "",
+                uuid: uuidv4(),
             },
             {
                 type: "todo",
+                uuid: uuidv4(),
                 content: [{
                     todo: "",
-                    status: false
+                    status: false,
+                    uuid: uuidv4()
                 }],
             }
         ]
@@ -130,9 +133,7 @@ const App = () => {
                         setTodos(p => [...p, { //master model for todo list
                             title: "",
                             uuid: uuidv4(),
-                            list: [
-                                
-                            ]
+                            list: []
                         }])
                         setScrollLeft(p => !p)
                     }} tabIndex={0} className="icon p-2 py-7 w-full my-2  rounded-[18px] h-[50px] flex justify-center items-center hover:bg-[#46B2E0] cursor-pointer  focus:bg-[#1B98F5]">
