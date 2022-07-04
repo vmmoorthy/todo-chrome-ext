@@ -1,5 +1,7 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { update } from "storage_engine";
 import { v4 as uuidv4 } from 'uuid';
+import { DB } from "../App";
 import Text from "./Text";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
@@ -28,6 +30,13 @@ const TodoContainer = ({ val }) => {
         }],
     });
 
+
+    useEffect(() => {
+        if (DB.db)
+            update(DB.db, "notes", todo);
+        // else
+        //     setTimeout(() => update(DB.db, "notes", todo), 100);
+    }, [todo]);
 
 
 

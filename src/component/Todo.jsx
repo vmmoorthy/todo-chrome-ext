@@ -2,10 +2,9 @@ import { useState } from "react";
 import { useTextInput } from "../hooks/TextDebounce";
 import { v4 as uuidv4 } from 'uuid';
 
-const Todo = ({ setTodoList, index, item, todoList, Focus }) => {
+const Todo = ({ setTodoList, item, Focus }) => {
 
     const [lfocus, setLfocus] = Focus;
-    console.log("from Todo");
 
     const removeTodo = () => setTodoList(p => p.filter(d => item.uuid !== d.uuid));
 
@@ -25,7 +24,7 @@ const Todo = ({ setTodoList, index, item, todoList, Focus }) => {
 
     return (<div key={item.uuid} className="todoItem flex flex-row items-center border-gray-400  border-solid border-[.5px] border-t-0 border-r-0 border-l-0">
 
-        <input type="checkbox" checked={item.status} onChange={() => setTodoList(p => p.map((d, i) => d.uuid === item.uuid ? ({ status: !d.status, todo: d.todo }) : d))} />
+        <input type="checkbox" checked={item.status} onChange={() => setTodoList(p => p.map((d, i) => d.uuid === item.uuid ? ({ ...d, status: !d.status }) : d))} />
 
         <textarea
             suppressContentEditableWarning

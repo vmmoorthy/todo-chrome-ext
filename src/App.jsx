@@ -9,6 +9,9 @@ import { useEffect, useRef, useState } from 'react';
 import RecordVideo from './component/RecordVideo';
 import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
+import { connect, insert, get, getAll, update } from 'storage_engine'
+
+export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
 const App = () => {
 
@@ -38,36 +41,69 @@ const App = () => {
     const notesContainer = useRef(null);
 
 
-    //get the data from IDB
-    // useEffect(() => {
-    //     (async function () {
-    //         try {
-    //             DB = await connect({
-    //                 dbName: 'todo',
-    //                 dbVersion: 1,
-    //                 store: [{
-    //                     storeName: 'notes',
-    //                     index: [{
-    //                         indexName: 'id',
-    //                         keyPath: 'id',
-    //                         options: {
-    //                             unique: true,
-    //                             // multiEntry: false
-    //                         }
-    //                     }]
-    //                 }]
-    //             });
-    //             console.log(DB);
-    //             console.log(await insert(DB, "list", { title: "test" + Math.random(), created: new Date(), completed: false }));
-    //             console.log(await get(DB, "list", 6));
-    //         } catch (error) {
-    //             alert(error);
-    //             console.log(error);
-    //         }
+    //get the data from IDB first time only
+    useEffect(() => {
+        (async function () {
+            try {
+                DB.db = await connect({
+                    dbName: 'todo',
+                    dbVersion: 1,
+                    store: [{
+                        storeName: 'notes',
+                        index: [{
+                            indexName: 'uuid',
+                            keyPath: 'uuid',
+                            options: {
+                                unique: true,
+                                autoIncrement: false
+                            }
+                        }]
+                    }, {
+                        storeName: 'todo',
+                        index: [{
+                            indexName: 'uuid',
+                            keyPath: 'uuid',
+                            options: {
+                                unique: true,
+                                autoIncrement: false
+                            }
+                        }]
+                    }]
+                });
+                console.log(DB);
 
-    //     }
-    //     )();
-    // }, []);
+                //get all the data from IDB
+                setTodos(await getAll(DB.db, "notes"))
+
+
+                // get data by key
+                // console.log(await get(DB.db, "notes", "969adfa5-f7c2-469b-95f6-4dfd7b7dac5d"));
+
+                //update data
+                // console.log(await update(DB.db, "notes", {
+                //     uuid: uuidv4(),
+                //     title: "doc about moorthy"
+                // }));
+
+                //insert data
+                // console.log(await insert(DB.db, "notes", {
+                //     uuid: uuidv4(),
+                //     title: "Title is here",
+                //     list: [
+                //         uuidv4(), uuidv4()
+                //     ]
+                // }));
+
+                //get all data
+                // console.log(await getAll(DB.db, "notes"));
+            } catch (error) {
+                alert(error);
+                console.log(error);
+            }
+
+        }
+        )();
+    }, []);
 
     // scroll the notes container to the left most position
     useEffect(() => {
@@ -130,11 +166,13 @@ const App = () => {
                     </div>
                     {/* add todo list */}
                     <div title='Add' onClick={() => {
-                        setTodos(p => [...p, { //master model for todo list
+                        const modelTodo = { //master model for todo list
                             title: "",
                             uuid: uuidv4(),
                             list: []
-                        }])
+                        }
+                        update(DB.db, 'notes', modelTodo)
+                        setTodos(p => [...p, modelTodo])
                         setScrollLeft(p => !p)
                     }} tabIndex={0} className="icon p-2 py-7 w-full my-2  rounded-[18px] h-[50px] flex justify-center items-center hover:bg-[#46B2E0] cursor-pointer  focus:bg-[#1B98F5]">
                         <svg width="40" height="40" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">

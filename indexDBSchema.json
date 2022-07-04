@@ -1,0 +1,25 @@
+{
+    "db": "todo",
+    "stores": [{
+            "storeName": "todoContainer",
+            "keyPath": "uuid",
+            "records": [{
+                "title": "string",
+                "uuid": "string",
+                "list": [
+                    "uuid of todo store"
+                ]
+            }]
+
+        },
+        {
+            "storeName": "todo",
+            "keyPath": "uuid",
+            "records": [{
+                "type": "string (text,todo[list of checklist],img,aud,vid",
+                "priority": "string (low,med,high)",
+                "content": "string|array|urlObject|urlString|blob"
+            }]
+        }
+    ]
+}
