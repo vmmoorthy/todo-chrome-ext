@@ -32,8 +32,13 @@ const TodoContainer = ({ val }) => {
 
 
     useEffect(() => {
-        if (DB.db)
-            update(DB.db, "notes", todo);
+        if (DB.db) {
+            update(DB.db, "notes", { ...todo, list: todo.list.map(i => i.uuid) });
+
+            todo.list.forEach(i => {
+                update(DB.db, "todo", i);
+            })
+        }
         // else
         //     setTimeout(() => update(DB.db, "notes", todo), 100);
     }, [todo]);

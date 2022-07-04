@@ -70,10 +70,18 @@ const App = () => {
                         }]
                     }]
                 });
-                console.log(DB);
+                // console.log(DB);
 
                 //get all the data from IDB
-                setTodos(await getAll(DB.db, "notes"))
+
+                const notesList = await getAll(DB.db, "notes")
+
+                const todoList = await getAll(DB.db, "todo")
+                // console.log(notesList);
+                // console.log(todoList);
+                // notesList.map(note => note.list.map(i => todoList.find(j => j.uuid === i.uuid)))
+
+                setTodos(notesList.map(note => ({ ...note, list: note.list.map(i => todoList.find(j => j.uuid === i)) })))
 
 
                 // get data by key
@@ -168,7 +176,7 @@ const App = () => {
                     <div title='Add' onClick={() => {
                         const modelTodo = { //master model for todo list
                             title: "",
-                            uuid: uuidv4(),
+                            uuid: String(todos.length) + uuidv4(),
                             list: []
                         }
                         update(DB.db, 'notes', modelTodo)
