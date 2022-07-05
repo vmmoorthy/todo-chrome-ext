@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import RecordVideo from './component/RecordVideo';
 import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
-import { connect, insert, get, getAll, update } from 'storage_engine'
+import { connect, insert, get, getAll, update, deleteData } from 'storage_engine'
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
@@ -19,7 +19,7 @@ const App = () => {
     const [scrollLeft, setScrollLeft] = useState(false);
     const [todos, setTodos] = useState(() => [{ //master model for todo list
         title: "",
-        uuid: uuidv4(),
+        uuid: "0" + uuidv4(), // 0 added before uuid to maintain the order
         list: [
             {
                 type: "text",// text||todo||pic||aud||video
@@ -39,6 +39,21 @@ const App = () => {
     }]); //each object represents a record in 'notes' store
 
     const notesContainer = useRef(null);
+
+
+    const deleteTodo = (uuid) => {
+        console.log(uuid);
+        let listOfTodo = todos.find(i => i.uuid === uuid).list.map(i => i.uuid);
+        console.log(listOfTodo);
+
+        listOfTodo.forEach(i => {
+            deleteData(DB.db, "todo", i);
+        })
+        deleteData(DB.db, "notes", uuid);
+
+        setTodos(p => p.filter(i => i.uuid !== uuid));
+
+    }
 
 
     //get the data from IDB first time only
@@ -130,7 +145,7 @@ const App = () => {
                 {/* todo list container */}
                 {page === "notes" &&
                     <div ref={r => notesContainer.current = r} className="grid  grid-flow-col m-1 p-4 gap-0 max-h-[99%] overflow-auto">
-                        {todos.map((v, i) => (<TodoContainer key={v.uuid} val={v} />))}
+                        {todos.map((v, i) => (<TodoContainer key={v.uuid} deleteTodo={deleteTodo} val={v} />))}
                     </div>}
                 {page === "reminder" && <div className="flex flex-col items-center justify-center h-full">
                     {/* card for timer */}

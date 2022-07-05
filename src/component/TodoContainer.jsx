@@ -9,11 +9,11 @@ import TodoList from "./TodoList";
 
 export const todoListSetstateContext = createContext([]);
 
-const TodoContainer = ({ val }) => {
+const TodoContainer = ({ val, deleteTodo }) => {
 
     const [todo, setTodo] = useState(val || {
         title: "",
-        uuid: uuidv4(),
+        uuid: "0" + uuidv4(),
         list: [{
             type: "text",// text||todo||pic||aud||video
             content: "",
@@ -98,8 +98,11 @@ const TodoContainer = ({ val }) => {
                     <path d="M30 24L20 18V30L30 24Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </div>
-            <div className="rounded-[20px] w-80 m-2 h-[95%]  text-white bg-[#8D3DAF]  ">
-
+            <div className="rounded-[20px] w-80 m-2 h-[95%] relative  text-white bg-[#8D3DAF]  ">
+                <div onClick={() => deleteTodo(todo.uuid)} className="closeTodo absolute opacity-20 invisible hover:opacity-100 bg-[#6A1B4D] w-6 cursor-pointer hover:bg-sky-300 rounded-full top-[-.5rem] h-6 p-1 right-[-.5rem]">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+                        <path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
+                </div>
                 {/* Title Edit box */}
                 <TextInput cb={v => setTodo(p => ({ ...p, title: v }))} title={todo.title} />
 
@@ -107,8 +110,8 @@ const TodoContainer = ({ val }) => {
                 <todoListSetstateContext.Provider value={setTodo}>
                     <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
                         {todo.list.map((item) => {
-                            if (item.type === "text") return <Text item={item} key={item.uuid} />
-                            else if (item.type === "todo") return <TodoList item={item} key={item.uuid} />
+                            if (item?.type === "text") return <Text item={item} key={item.uuid} />
+                            else if (item?.type === "todo") return <TodoList item={item} key={item.uuid} />
                             else return <h1 className="text-white">Something went Wrong</h1>
                         })}
 

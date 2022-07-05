@@ -6,12 +6,21 @@
 
 
 /* .todoContainer:hover {} */
-.addToolsModel,.blockOptions {
+
+.addToolsModel,
+.blockOptions {
     visibility: hidden;
 }
+
 .todoContainer:hover>.addToolsModel {
     visibility: visible;
 }
-.todoContainerWraper:hover>.blockOptions{
+
+.todoContainerWraper:hover>.blockOptions {
     visibility: visible;
+}
+
+.todoContainer:hover .closeTodo {
+    visibility: visible;
+    /* opacity: .2; */
 }
