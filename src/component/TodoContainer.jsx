@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { update } from "storage_engine";
 import { v4 as uuidv4 } from 'uuid';
 import { DB } from "../App";
+import PriorityContext from "../context/priorityContext";
 import Text from "./Text";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
@@ -109,12 +110,13 @@ const TodoContainer = ({ val, deleteTodo }) => {
                 {/* <div className="listContainer"> */}
                 <todoListSetstateContext.Provider value={setTodo}>
                     <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
-                        {todo.list.map((item) => {
-                            if (item?.type === "text") return <Text item={item} key={item.uuid} />
-                            else if (item?.type === "todo") return <TodoList item={item} key={item.uuid} />
-                            else return <h1 className="text-white">Something went Wrong</h1>
-                        })}
-
+                        <PriorityContext>
+                            {todo.list.map((item) => {
+                                if (item?.type === "text") return <Text item={item} key={item.uuid} />
+                                else if (item?.type === "todo") return <TodoList item={item} key={item.uuid} />
+                                else return <h1 className="text-white">Something went Wrong</h1>
+                            })}
+                        </PriorityContext>
                         {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
                 <Audio />
                 <Video /> */}

@@ -1,10 +1,60 @@
-import { useContext } from "react";
-import { deleteData } from "storage_engine";
+import { useContext, useEffect, useRef, useState } from "react";
+import { deleteData, getAll, insert } from "storage_engine";
 import { DB } from "../App";
+import { useTextInput } from "../hooks/TextDebounce";
 import { todoListSetstateContext } from "./TodoContainer";
+import { v4 as uuidv4 } from 'uuid'
+import { priorityContext } from "../context/priorityContext";
+// import editSVG from '../assert/edit.svg';
 
 const BlockOptions = ({ item }) => {
     const todoSetState = useContext(todoListSetstateContext)
+
+    const [priorityList, setPriorityList] = useContext(priorityContext)
+
+    const [priorityColor, setPriorityColor] = useState("#fff");
+
+    const [edit, setEdit] = useState(false);
+
+    useEffect(() => {
+        (async () => setPriorityList(await getAll(DB.db, "priority")))()
+    }, []);
+
+
+    const changeColor = e => {
+        e.preventDefault();
+        setPriorityColor(e.target.value);
+    }
+
+    const updatePriority = (e, p_uuid) => {
+        if (!edit) {
+            todoSetState(p => ({
+                ...p, list: p.list.map(todoli => {
+
+                    if (todoli.uuid === item.uuid) {
+                        return { ...todoli, priority: p_uuid }
+                    }
+                    return todoli
+                })
+            }))
+        }
+    }
+
+    const updatePriorityText = useTextInput((e) => {
+
+        if (e.key === "Enter" && e.ctrlKey) {
+            const tdata = { uuid: uuidv4(), color: priorityColor, text: e.target.value }
+            // add an priority 
+            setPriorityList(p => ([...p, tdata]))
+            insert(DB.db, "priority", tdata)
+            //to reset the text & color values
+            setPriorityColor("#fff")
+            setTimeout(() => e.target.value = "", 0);
+        }
+
+    });
+
+
     return (
         <div contentEditable={false} className="blockOptions grid grid-flow-col items-end absolute z-10  top-[-1rem] w-full ">
             <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] pined w-6 p-1 h-6 bg-[#6A1B4D] rounded">
@@ -13,15 +63,69 @@ const BlockOptions = ({ item }) => {
                 </svg>
 
             </div>
-            <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] priority grid grid-flow-col items-center bg-[#6A1B4D] gap-1 justify-center w-min h-min max-h-6 px-1 py-[0.2rem] rounded ">
-                <div className="color w-3 h-3 rounded-full bg-red-500 "></div>
-                <span className="text-[0.87rem] leading-none ">High</span>
+            <div tabIndex={0} className="priority opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] priority grid grid-flow-col items-center bg-[#6A1B4D] gap-1 justify-center w-min h-min max-h-6 px-1 py-[0.2rem] rounded ">
+                <div style={{ backgroundColor: priorityList.find(v => v.uuid === item.priority)?.color || "#fff5" }} className="color w-3 h-3 rounded-full "></div>
+                <span className="text-[0.87rem] leading-none ">{priorityList.find(v => v.uuid === item.priority)?.text || "--"}</span>
                 <svg className="w-4 h-4" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M32.8282 11.7188H7.17195C6.40242 11.7188 5.97273 12.5313 6.44929 13.0859L19.2774 27.9609C19.6446 28.3867 20.3516 28.3867 20.7227 27.9609L33.5509 13.0859C34.0274 12.5313 33.5977 11.7188 32.8282 11.7188Z" fill="white" />
                 </svg>
-
+                <div tabIndex={1} className="dropDown bg-[#6A1B4D]  border-white border-solid border-[1px] rounded p-1 absolute top-[1.5rem] ">
+                    <div className="relative">
+                        {edit ? <div onClick={() => setEdit(false)} className="edit hover:opacity-100 right-[-1rem] top-[-.5rem] absolute h-5 w-5">
+                            <svg
+                                viewBox="0 0 50 38"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.9822 36.5533L0.732202 20.3033C-0.244067 19.327 -0.244067 17.7441 0.732202 16.7677L4.26765 13.2322C5.24392 12.2558 6.82693 12.2558 7.8032 13.2322L18.75 24.1789L42.1968 0.732202C43.173 -0.244067 44.756 -0.244067 45.7323 0.732202L49.2678 4.26775C50.244 5.24402 50.244 6.82693 49.2678 7.8033L20.5178 36.5534C19.5414 37.5297 17.9585 37.5297 16.9822 36.5533Z" fill="white" />
+                            </svg>
+                        </div>
+                            :
+                            <div onClick={() => setEdit(true)} className="edit opacity-20  hover:opacity-100 right-[-1rem] top-[-.9rem] absolute h-5 w-5">
+                                <svg viewBox="0 0 50 50"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g clipPath={`url(#clip0_6_833${item.uuid})`}>
+                                        <path d="M34.9479 9.99992L42.7778 17.8298C43.1076 18.1596 43.1076 18.6978 42.7778 19.0277L23.8194 37.986L15.7639 38.8801C14.6875 39.0017 13.776 38.0902 13.8976 37.0138L14.7917 28.9583L33.75 9.99992C34.0799 9.67006 34.6181 9.67006 34.9479 9.99992ZM49.0104 8.01207L44.7743 3.77596C43.4549 2.45652 41.3108 2.45652 39.9826 3.77596L36.9097 6.84888C36.5799 7.17874 36.5799 7.71693 36.9097 8.04679L44.7396 15.8767C45.0694 16.2065 45.6076 16.2065 45.9375 15.8767L49.0104 12.8037C50.3299 11.4756 50.3299 9.33152 49.0104 8.01207ZM33.3333 32.8298V41.6666H5.55556V13.8888H25.5035C25.7812 13.8888 26.0417 13.776 26.2413 13.585L29.7135 10.1128C30.3733 9.45304 29.9045 8.33325 28.9757 8.33325H4.16667C1.86632 8.33325 0 10.1996 0 12.4999V43.0555C0 45.3558 1.86632 47.2221 4.16667 47.2221H34.7222C37.0226 47.2221 38.8889 45.3558 38.8889 43.0555V29.3576C38.8889 28.4287 37.7691 27.9687 37.1094 28.6197L33.6371 32.0919C33.4462 32.2916 33.3333 32.552 33.3333 32.8298Z" fill="white" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id={`clip0_6_833${item.uuid}`}>
+                                            <rect width="50" height="50" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </div>}
+                        {priorityList.map(v =>
+                            <div key={v.uuid} className="Midium flex flex-row items-center justify-between hover:bg-[#6D385A]">
+                                <span className="flex flex-row justify-center items-center gap-1" onClick={e => updatePriority(e, v.uuid)}>
+                                    <div className="color w-3 h-3 rounded-full " style={{ backgroundColor: v.color }}></div>
+                                    <span contentEditable={edit}>{v.text}</span>
+                                </span>
+                                {edit && <div className="remove w-[0.85rem] h-[0.85rem] p-[0.05rem] ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
+                                </div>}
+                            </div>)}
+                        {edit && <div className="addNew flex flex-row items-center gap-1 hover:bg-[#6D385A]">
+                            <label className="color w-3 h-3 rounded-full" style={{ backgroundColor: priorityColor }}>
+                                <input type="color" value={priorityColor} onChange={changeColor} className=" invisible border-none" />
+                            </label>
+                            <input
+                                type={"text"}
+                                onKeyDown={updatePriorityText}
+                                placeholder="Add..."
+                                className="txt w-16 cursor-text bg-transparent"
+                            />
+                        </div>}
+                    </div>
+                </div>
             </div>
-            <div className="opacity-20 transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-h-6 whitespace-nowrap p-1 rounded bg-[#6A1B4D] ">05 Jun 2020 18:45PM</div>
+
+            {/* time */}
+            <div className="opacity-20 relative transition-opacity hover:opacity-90 border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap p-1 rounded bg-[#6A1B4D] ">
+                05 Jun 2020 18:45PM
+                {/* <div className="absolute"> */}
+
+                {/* </div> */}
+            </div>
+
+
             <div onClick={() => {
                 todoSetState(p => ({ ...p, list: p.list.filter(todoli => todoli.uuid !== item.uuid) }))
                 deleteData(DB.db, "todo", item.uuid)

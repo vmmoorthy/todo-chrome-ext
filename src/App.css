@@ -24,3 +24,11 @@
     visibility: visible;
     /* opacity: .2; */
 }
+
+.priority .dropDown{
+    visibility: hidden;
+}
+
+.priority:focus .dropDown,.dropDown:focus,.dropDown:hover{
+    visibility: visible;
+}

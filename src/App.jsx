@@ -23,11 +23,13 @@ const App = () => {
         list: [
             {
                 type: "text",// text||todo||pic||aud||video
+                priority:"", //uuid of priority
                 content: "",
                 uuid: uuidv4(),
             },
             {
                 type: "todo",
+                priority:"", //uuid of priority
                 uuid: uuidv4(),
                 content: [{
                     todo: "",
@@ -75,6 +77,23 @@ const App = () => {
                         }]
                     }, {
                         storeName: 'todo',
+                        index: [{
+                            indexName: 'uuid',
+                            keyPath: 'uuid',
+                            options: {
+                                unique: true,
+                                autoIncrement: false
+                            }
+                        }, {
+                            indexName: 'priority',
+                            keyPath: 'priority',
+                            options: {
+                                unique: false,
+                                autoIncrement: false
+                            }
+                        }]
+                    }, {
+                        storeName: 'priority',
                         index: [{
                             indexName: 'uuid',
                             keyPath: 'uuid',
@@ -166,7 +185,7 @@ const App = () => {
 
 
                 {/* option bar container */}
-                <div className="bg-[#23C4ED] border-white overflow-auto border-solid rounded-[18px] border-[1px] max-w-10 p-2 h-[95%] mr-2">
+                <div className="bg-[#23C4ED] border-white overflow-auto border-solid rounded-[18px] border-[1px] min-w-[4rem] max-w-10 p-2 h-[95%] mr-2">
                     {/* notes */}
                     <div title="Notes" onClick={() => setPage("notes")} style={{ backgroundColor: page === "notes" ? "#1B98F5" : 'unset' }} tabIndex={0} className="icon p-2 py-7 w-full my-2  rounded-[18px] h-[50px] flex justify-center items-center hover:bg-[#46B2E0] cursor-pointer">
                         <svg width="40" height="42" viewBox="0 0 40 42" fill="none" xmlns="http://www.w3.org/2000/svg">
