@@ -9,7 +9,8 @@ import { useEffect, useRef, useState } from 'react';
 import RecordVideo from './component/RecordVideo';
 import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
-import { connect, insert, get, getAll, update, deleteData } from 'storage_engine'
+import { connect, insert, getAll, update, deleteData } from 'storage_engine'
+import Priority from './pages/Priority';
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
@@ -23,13 +24,13 @@ const App = () => {
         list: [
             {
                 type: "text",// text||todo||pic||aud||video
-                priority:"", //uuid of priority
+                priority: "", //uuid of priority
                 content: "",
                 uuid: uuidv4(),
             },
             {
                 type: "todo",
-                priority:"", //uuid of priority
+                priority: "", //uuid of priority
                 uuid: uuidv4(),
                 content: [{
                     todo: "",
@@ -174,14 +175,7 @@ const App = () => {
                         </div>
                     </div>
                 </div>}
-                {page === "priority" && <div className="flex flex-col items-center justify-center h-full">
-                    {/* card for timer */}
-                    <div className="rounded-[20px] w-80 m-2 h-full text-white bg-[#8D3DAF]  ">
-                        <div className="flex flex-col items-center justify-center h-full">
-                            <h1>From Priority</h1>
-                        </div>
-                    </div>
-                </div>}
+                {page === "priority" && <Priority />}
 
 
                 {/* option bar container */}

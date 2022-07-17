@@ -17,7 +17,8 @@ const BlockOptions = ({ item }) => {
     const [edit, setEdit] = useState(false);
 
     useEffect(() => {
-        (async () => setPriorityList(await getAll(DB.db, "priority")))()
+        if (DB.db)
+            (async () => setPriorityList(await getAll(DB.db, "priority")))()
     }, []);
 
 
