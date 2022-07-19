@@ -3,6 +3,7 @@ import { update } from "storage_engine";
 import { v4 as uuidv4 } from 'uuid';
 import { DB } from "../App";
 import PriorityContext from "../context/priorityContext";
+import BlockOptions from "./blockOptions";
 import Text from "./Text";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
@@ -10,41 +11,41 @@ import TodoList from "./TodoList";
 
 export const todoListSetstateContext = createContext([]);
 
-const TodoContainer = ({ val, deleteTodo }) => {
+const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
 
-    const [todo, setTodo] = useState(val || {
-        title: "",
-        uuid: "0" + uuidv4(),
-        list: [{
-            type: "text",// text||todo||pic||aud||video
-            content: "",
-            uuid: uuidv4(),
-        },
-        {
-            uuid: uuidv4(),
-            type: "todo",
-            content: [{
-                uuid: uuidv4(),
-                todo: "",
-                status: false
-            }],
-        }],
-    });
+    // const [todo, setTodo] = useState(val || {
+    //     title: "",
+    //     uuid: "0" + uuidv4(),
+    //     list: [{
+    //         type: "text",// text||todo||pic||aud||video
+    //         content: "",
+    //         uuid: uuidv4(),
+    //     },
+    //     {
+    //         uuid: uuidv4(),
+    //         type: "todo",
+    //         content: [{
+    //             uuid: uuidv4(),
+    //             todo: "",
+    //             status: false
+    //         }],
+    //     }],
+    // });
 
-    
-    useEffect(() => {
 
-            if (DB.db) {
-                update(DB.db, "notes", { ...todo, list: todo.list.map(i => i.uuid) });
+    // useEffect(() => {
 
-                todo.list.forEach(i => {
-                    update(DB.db, "todo", i);
-                })
-            }
+    //         if (DB.db) {
+    //             update(DB.db, "notes", { ...todo, list: todo.list.map(i => i.uuid) });
 
-        // else
-        //     setTimeout(() => update(DB.db, "notes", todo), 100);
-    }, [todo]);
+    //             todo.list.forEach(i => {
+    //                 update(DB.db, "todo", i);
+    //             })
+    //         }
+
+    //     // else
+    //     //     setTimeout(() => update(DB.db, "notes", todo), 100);
+    // }, [todo]);
 
 
 
@@ -116,9 +117,15 @@ const TodoContainer = ({ val, deleteTodo }) => {
                     <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
                         <PriorityContext>
                             {todo.list.map((item) => {
-                                if (item?.type === "text") return <Text item={item} key={item.uuid} />
-                                else if (item?.type === "todo") return <TodoList item={item} key={item.uuid} />
-                                else return <h1 className="text-white">Something went Wrong</h1>
+                                const selectCard = () => {
+                                    if (item?.type === "text") return <Text item={item} />
+                                    else if (item?.type === "todo") return <TodoList item={item} />
+                                    else return <h1 className="text-white">Something went Wrong</h1>
+                                }
+                                return <div key={item.uuid} className="todoContainerWraper relative mt-5">
+                                    <BlockOptions item={item} />
+                                    {selectCard()}
+                                </div>
                             })}
                         </PriorityContext>
                         {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
@@ -133,8 +140,8 @@ const TodoContainer = ({ val, deleteTodo }) => {
                     </div>
                 </todoListSetstateContext.Provider>
                 {/* </div> */}
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { deleteData, getAll, insert } from "storage_engine";
-import { DB, pinnedSetStateContext } from "../App";
+import { DB, scrollToViewContext } from "../App";
 import { useTextInput } from "../hooks/TextDebounce";
 import { todoListSetstateContext } from "./TodoContainer";
 import { v4 as uuidv4 } from 'uuid'
@@ -9,7 +9,15 @@ import { priorityContext } from "../context/priorityContext";
 
 const BlockOptions = ({ item }) => {
     const todoSetState = useContext(todoListSetstateContext)
-    const pinnedSetState = useContext(pinnedSetStateContext)
+    const scrollToView = useContext(scrollToViewContext)
+
+    const scVRef = useRef(null)
+
+    if (scrollToView === item.uuid) {
+        console.log(scVRef);
+        scVRef.current.parentElement.classList.add('scrollFocus')
+        scVRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
 
     const [priorityList, setPriorityList] = useContext(priorityContext)
 
@@ -58,12 +66,12 @@ const BlockOptions = ({ item }) => {
 
     const updatePinned = () => {
 
-        if (item.pinned)
-            // to remove item from pinned list
-            pinnedSetState(p => p.filter(i => i.uuid !== item.uuid))
-        else
-            // add item to pinned list
-            pinnedSetState(p => [...p, item])
+        // if (item.pinned)
+        //     // to remove item from pinned list
+        //     pinnedSetState(p => p.filter(i => i.uuid !== item.uuid))
+        // else
+        //     // add item to pinned list
+        //     pinnedSetState(p => [...p, item])
 
         todoSetState(p => ({
             ...p, list: p.list.map(todoli => {
@@ -81,7 +89,7 @@ const BlockOptions = ({ item }) => {
 
 
     return (
-        <div contentEditable={false} className="blockOptions opacity-20 transition-opacity hover:opacity-100 grid grid-flow-col items-end absolute z-10  top-[-1rem] w-full ">
+        <div contentEditable={false} ref={r => scVRef.current = r} className="blockOptions opacity-20 transition-opacity hover:opacity-100 grid grid-flow-col items-end absolute z-10  top-[-1rem] w-full ">
             <div onClick={updatePinned} className="border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] pined w-6 p-1 h-6 bg-[#6A1B4D] rounded">
                 {item.pinned ? <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16">
                     <path fill="#fff" d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588c-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828l-3.182 3.182c-.195.195-1.219.902-1.414.707c-.195-.195.512-1.22.707-1.414l3.182-3.182l-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z" />

@@ -80,19 +80,24 @@ export default Priority;
 export const ReadOnlyText = ({ content }) => {
     return (
         <div className="todoContainerWraper relative mt-5">
-            <div placeholder="hello" className="text relative bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
+            <div placeholder="hello" className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
             </div>
         </div>
     );
 }
 
-export const ReadOnlyList = ({ list }) => {
-    return list.map((item) => {
-        if (item?.type === "text") return <ReadOnlyText key={item.uuid} content={item.content} />
-        else if (item?.type === "todo") return <ReadOnlyTodo key={item.uuid} content={item.content} />
+export const ReadOnlyList = ({ list, focusToElement }) => list.map((item) => {
+    const GetTaskOption = () => {
+        if (item?.type === "text") return <ReadOnlyText content={item.content} />
+        else if (item?.type === "todo") return <ReadOnlyTodo content={item.content} />
         else return <h1 className="text-white">Something went Wrong</h1>
-    })
-}
+    }
+    //for scroll to view
+    return <div className="" key={item.uuid} onClick={() => focusToElement(item.uuid)}>
+        <GetTaskOption />
+    </div>
+})
+
 
 
 export const ReadOnlyTodo = ({ content }) => {
@@ -111,7 +116,7 @@ export const ReadOnlyTodo = ({ content }) => {
                             // contentEditable
                             disabled
                             placeholder="Todo..."
-                            className="ml-2 w-full  bg-transparent " >{item.todo}</div>
+                            className="ml-2 w-full text-white  bg-transparent " >{item.todo}</div>
                         <div className="  cursor-pointer  remove w-4  h-min ">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
                         </div>

@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import BlockOptions from "./blockOptions";
 import Todo from "./Todo";
 import { todoListSetstateContext } from "./TodoContainer";
 const TodoList = ({ item, cb }) => {
@@ -15,14 +14,11 @@ const TodoList = ({ item, cb }) => {
     }, [todoList]);
 
     return (
-        <div className="todoContainerWraper relative mt-5">
-            <BlockOptions item={item} />
-            <div className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
+            <div onMouseOver={e => e.target.parentElement.classList.remove('scrollFocus')} className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
                 {todoList.map((item) => (
                     <Todo item={item} setTodoList={setTodoList} Focus={Focus} key={item.uuid} />
                 ))}
             </div>
-        </div>
     );
 }
 
