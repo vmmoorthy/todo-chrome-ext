@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { update } from "storage_engine";
 import { v4 as uuidv4 } from 'uuid';
 import { DB } from "../App";
@@ -31,15 +31,17 @@ const TodoContainer = ({ val, deleteTodo }) => {
         }],
     });
 
-
+    
     useEffect(() => {
-        if (DB.db) {
-            update(DB.db, "notes", { ...todo, list: todo.list.map(i => i.uuid) });
 
-            todo.list.forEach(i => {
-                update(DB.db, "todo", i);
-            })
-        }
+            if (DB.db) {
+                update(DB.db, "notes", { ...todo, list: todo.list.map(i => i.uuid) });
+
+                todo.list.forEach(i => {
+                    update(DB.db, "todo", i);
+                })
+            }
+
         // else
         //     setTimeout(() => update(DB.db, "notes", todo), 100);
     }, [todo]);
@@ -51,6 +53,7 @@ const TodoContainer = ({ val, deleteTodo }) => {
             setTodo(p => ({
                 ...p, list: [...p.list, {
                     type: "text",
+                    // pinned: false,
                     content: "",
                     uuid: uuidv4(),
                 },]
@@ -59,6 +62,7 @@ const TodoContainer = ({ val, deleteTodo }) => {
             setTodo(p => ({
                 ...p, list: [...p.list, {
                     type: "todo",
+                    pinned: false,
                     uuid: uuidv4(),
                     content: [{
                         uuid: uuidv4(),

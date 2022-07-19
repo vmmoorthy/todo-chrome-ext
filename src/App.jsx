@@ -5,41 +5,46 @@ import Text from "./component/Text";
 import Picture from "./component/Picture";
 import Audio from "./component/Audio";
 import Video from "./component/Video";
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import RecordVideo from './component/RecordVideo';
 import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
-import { connect, insert, getAll, update, deleteData } from 'storage_engine'
-import Priority from './pages/Priority';
+import { connect, insert, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
+import Priority, { ReadOnlyList } from './pages/Priority';
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
+
+export const pinnedSetStateContext = createContext(() => { });
 
 const App = () => {
 
     const [page, setPage] = useState("notes");
     const [scrollLeft, setScrollLeft] = useState(false);
-    const [todos, setTodos] = useState(() => [{ //master model for todo list
-        title: "",
-        uuid: "0" + uuidv4(), // 0 added before uuid to maintain the order
-        list: [
-            {
-                type: "text",// text||todo||pic||aud||video
-                priority: "", //uuid of priority
-                content: "",
-                uuid: uuidv4(),
-            },
-            {
-                type: "todo",
-                priority: "", //uuid of priority
-                uuid: uuidv4(),
-                content: [{
-                    todo: "",
-                    status: false,
-                    uuid: uuidv4()
-                }],
-            }
-        ]
-    }]); //each object represents a record in 'notes' store
+    const [pinnedList, setPinnedList] = useState([]);
+    const [todos, setTodos] = useState(() => [
+        //     { //master model for todo list
+        //     title: "",
+        //     uuid: "0" + uuidv4(), // 0 added before uuid to maintain the order
+        //     list: [
+        //         {
+        //             type: "text",// text||todo||pic||aud||video
+        //             priority: "", //uuid of priority
+        //             content: "",
+        //             uuid: uuidv4(),
+        //         },
+        //         {
+        //             type: "todo",
+        //             priority: "", //uuid of priority
+        //             uuid: uuidv4(),
+        //             content: [{
+        //                 todo: "",
+        //                 status: false,
+        //                 uuid: uuidv4()
+        //             }],
+        //         }
+        //     ]
+        // }
+    ]); //each object represents a record in 'notes' store
 
     const notesContainer = useRef(null);
 
@@ -92,7 +97,16 @@ const App = () => {
                                 unique: false,
                                 autoIncrement: false
                             }
-                        }]
+                        },
+                            //  {
+                            //     indexName: 'pinned',
+                            //     keyPath: 'pinned',
+                            //     options: {
+                            //         unique: false,
+                            //         autoIncrement: false
+                            //     }
+                            // }
+                        ]
                     }, {
                         storeName: 'priority',
                         index: [{
@@ -103,7 +117,19 @@ const App = () => {
                                 autoIncrement: false
                             }
                         }]
-                    }]
+                    },
+                        // {
+                        //     storeName: 'pinned',
+                        //     index: [{
+                        //         indexName: 'uuid',
+                        //         keyPath: 'uuid',
+                        //         options: {
+                        //             unique: true,
+                        //             autoIncrement: false
+                        //         }
+                        //     }]
+                        // }
+                    ]
                 });
                 // console.log(DB);
 
@@ -112,33 +138,11 @@ const App = () => {
                 const notesList = await getAll(DB.db, "notes")
 
                 const todoList = await getAll(DB.db, "todo")
-                // console.log(notesList);
-                // console.log(todoList);
-                // notesList.map(note => note.list.map(i => todoList.find(j => j.uuid === i.uuid)))
 
                 setTodos(notesList.map(note => ({ ...note, list: note.list.map(i => todoList.find(j => j.uuid === i)) })))
 
+                // console.log(await getAllIndexValue(DB.db, "todo", "pinned", true))
 
-                // get data by key
-                // console.log(await get(DB.db, "notes", "969adfa5-f7c2-469b-95f6-4dfd7b7dac5d"));
-
-                //update data
-                // console.log(await update(DB.db, "notes", {
-                //     uuid: uuidv4(),
-                //     title: "doc about moorthy"
-                // }));
-
-                //insert data
-                // console.log(await insert(DB.db, "notes", {
-                //     uuid: uuidv4(),
-                //     title: "Title is here",
-                //     list: [
-                //         uuidv4(), uuidv4()
-                //     ]
-                // }));
-
-                //get all data
-                // console.log(await getAll(DB.db, "notes"));
             } catch (error) {
                 alert(error);
                 console.log(error);
@@ -165,7 +169,9 @@ const App = () => {
                 {/* todo list container */}
                 {page === "notes" &&
                     <div ref={r => notesContainer.current = r} className="grid  grid-flow-col m-1 p-4 gap-0 max-h-[99%] overflow-auto">
-                        {todos.map((v, i) => (<TodoContainer key={v.uuid} deleteTodo={deleteTodo} val={v} />))}
+                        <pinnedSetStateContext.Provider value={setPinnedList}>
+                            {todos.map((v, i) => (<TodoContainer key={v.uuid} deleteTodo={deleteTodo} val={v} />))}
+                        </pinnedSetStateContext.Provider>
                     </div>}
                 {page === "reminder" && <div className="flex flex-col items-center justify-center h-full">
                     {/* card for timer */}
@@ -216,6 +222,17 @@ const App = () => {
                             <path d="M20 10.9961C20.3315 10.9961 20.6495 11.1278 20.8839 11.3622C21.1183 11.5966 21.25 11.9146 21.25 12.2461V19.7461H28.75C29.0815 19.7461 29.3995 19.8778 29.6339 20.1122C29.8683 20.3466 30 20.6646 30 20.9961C30 21.3276 29.8683 21.6456 29.6339 21.88C29.3995 22.1144 29.0815 22.2461 28.75 22.2461H21.25V29.7461C21.25 30.0776 21.1183 30.3956 20.8839 30.63C20.6495 30.8644 20.3315 30.9961 20 30.9961C19.6685 30.9961 19.3505 30.8644 19.1161 30.63C18.8817 30.3956 18.75 30.0776 18.75 29.7461V22.2461H11.25C10.9185 22.2461 10.6005 22.1144 10.3661 21.88C10.1317 21.6456 10 21.3276 10 20.9961C10 20.6646 10.1317 20.3466 10.3661 20.1122C10.6005 19.8778 10.9185 19.7461 11.25 19.7461H18.75V12.2461C18.75 11.9146 18.8817 11.5966 19.1161 11.3622C19.3505 11.1278 19.6685 10.9961 20 10.9961Z" fill="white" />
                         </svg>
                     </div>}
+                    <div tabIndex={0} className="pinned  relative icon p-2 py-7 w-full my-2  rounded-[18px] h-[50px] flex justify-center items-center hover:bg-[#46B2E0] cursor-pointer  focus:bg-[#1B98F5] ">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20" >
+                            <path fill="#fff" d="M3 9.018V14l.005.176A3 3 0 0 0 6 17h4.379l.176-.008a2 2 0 0 0 1.238-.578l4.621-4.621l.12-.13A2 2 0 0 0 17 10.38V6l-.005-.176A3 3 0 0 0 14 3H9.463c.254.3.416.644.49 1H14l.15.005A2 2 0 0 1 16 6v4h-3l-.176.005A3 3 0 0 0 10 13v3H6l-.15-.005A2 2 0 0 1 4 14V9.81a1.815 1.815 0 0 1-.615-.407L3 9.018ZM13 11l2.783.001c-.024.03-.05.058-.076.085l-4.621 4.621l-.086.074V13l.005-.15A2 2 0 0 1 13 11ZM8.538 3.387L6.611 1.46a1.5 1.5 0 0 0-2.409.404L3.4 3.51a1 1 0 0 1-.573.507l-1.102.38a1 1 0 0 0-.38 1.653l.948.948L1 8.29v.707h.707L3 7.706l.947.947a1 1 0 0 0 1.653-.38l.38-1.102a1 1 0 0 1 .507-.572l1.647-.803a1.5 1.5 0 0 0 .404-2.409Z" />
+                        </svg>
+                        <div className="fixed">
+                            <div className="pinedListDropdown bg-[#E07C24] border-2 border-solid border-white dropDown w-[25rem] p-2 drop-shadow-2xl rounded  right-[0rem]  absolute top-[0rem]  max-h-[21rem] overflow-auto">
+                                <ReadOnlyList list={pinnedList} />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

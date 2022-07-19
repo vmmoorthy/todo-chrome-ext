@@ -68,35 +68,7 @@ const Priority = () => {
                     </div>
                 </div>
                 <div className="list z-0 w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
-                    {listOfTask.map((item) => {
-                        if (item?.type === "text") return <div key={item.uuid} className="todoContainerWraper relative mt-5">
-                            <div placeholder="hello" className="text relative bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{item.content.replaceAll("\n", "<br/>")}
-                            </div>
-                        </div>
-                        else if (item?.type === "todo") return <div key={item.uuid} className="todoContainerWraper relative mt-5">
-
-                            <div className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
-                                {item.content.map((item) => (
-                                    <div key={item.uuid} className="todoItem flex flex-row items-center border-gray-400  border-solid border-[.5px] border-t-0 border-r-0 border-l-0">
-
-                                        <input type="checkbox" checked={item.status} disabled />
-
-                                        <div
-
-                                            // contentEditable
-                                            disabled
-                                            placeholder="Todo..."
-                                            className="ml-2 w-full  bg-transparent " >{item.todo}</div>
-                                        <div className="  cursor-pointer  remove w-4  h-min ">
-                                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
-                                        </div>
-
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        else return <h1 className="text-white">Something went Wrong</h1>
-                    })}
+                    <ReadOnlyList list={listOfTask} />
                 </div>
             </div>
         </div>
@@ -104,3 +76,49 @@ const Priority = () => {
 }
 
 export default Priority;
+
+export const ReadOnlyText = ({ content }) => {
+    return (
+        <div className="todoContainerWraper relative mt-5">
+            <div placeholder="hello" className="text relative bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
+            </div>
+        </div>
+    );
+}
+
+export const ReadOnlyList = ({ list }) => {
+    return list.map((item) => {
+        if (item?.type === "text") return <ReadOnlyText key={item.uuid} content={item.content} />
+        else if (item?.type === "todo") return <ReadOnlyTodo key={item.uuid} content={item.content} />
+        else return <h1 className="text-white">Something went Wrong</h1>
+    })
+}
+
+
+export const ReadOnlyTodo = ({ content }) => {
+    return (
+
+        <div className="todoContainerWraper relative mt-5">
+
+            <div className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
+                {content.map((item) => (
+                    <div key={item.uuid} className="todoItem flex flex-row items-center border-gray-400  border-solid border-[.5px] border-t-0 border-r-0 border-l-0">
+
+                        <input type="checkbox" checked={item.status} disabled />
+
+                        <div
+
+                            // contentEditable
+                            disabled
+                            placeholder="Todo..."
+                            className="ml-2 w-full  bg-transparent " >{item.todo}</div>
+                        <div className="  cursor-pointer  remove w-4  h-min ">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><path fill="#fff" d="m325.297 256l134.148-134.148c19.136-19.136 19.136-50.161 0-69.297c-19.137-19.136-50.16-19.136-69.297 0L256 186.703L121.852 52.555c-19.136-19.136-50.161-19.136-69.297 0s-19.136 50.161 0 69.297L186.703 256L52.555 390.148c-19.136 19.136-19.136 50.161 0 69.297c9.568 9.567 22.108 14.352 34.648 14.352s25.081-4.784 34.648-14.352L256 325.297l134.148 134.148c9.568 9.567 22.108 14.352 34.648 14.352s25.08-4.784 34.648-14.352c19.136-19.136 19.136-50.161 0-69.297L325.297 256z" /></svg>
+                        </div>
+
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
