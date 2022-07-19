@@ -11,6 +11,7 @@ import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
 import { connect, insert, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
 import Priority, { ReadOnlyList } from './pages/Priority';
+import Reminder from './pages/Reminder';
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
@@ -65,8 +66,8 @@ const App = () => {
     }
 
     const getPinnedList = async () => setPinnedList(await getAllIndexValue(DB.db, "todo", "pinned", 1))
-    
-    
+
+
     //get the data from IDB first time only
     useEffect(() => {
         (async function () {
@@ -171,14 +172,7 @@ const App = () => {
                                 }))} deleteTodo={deleteTodo} todo={v} />))}
                         </scrollToViewContext.Provider>
                     </div>}
-                {page === "reminder" && <div className="flex flex-col items-center justify-center h-full">
-                    {/* card for timer */}
-                    <div className="rounded-[20px] w-80 m-2 h-full text-white bg-[#8D3DAF]  ">
-                        <div className="flex flex-col items-center justify-center h-full">
-                            <h1>From Reminder</h1>
-                        </div>
-                    </div>
-                </div>}
+                {page === "reminder" && <Reminder />}
                 {page === "priority" && <Priority />}
 
 

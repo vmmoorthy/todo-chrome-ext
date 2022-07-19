@@ -14,9 +14,8 @@ const BlockOptions = ({ item }) => {
     const scVRef = useRef(null)
 
     if (scrollToView === item.uuid) {
-        console.log(scVRef);
-        scVRef.current.parentElement.classList.add('scrollFocus')
-        scVRef.current.scrollIntoView({ behavior: 'smooth' })
+        scVRef.current?.parentElement.classList.add('scrollFocus')
+        scVRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
     const [priorityList, setPriorityList] = useContext(priorityContext)
@@ -64,26 +63,30 @@ const BlockOptions = ({ item }) => {
 
     });
 
-    const updatePinned = () => {
+    const updatePinned = () => todoSetState(p => ({
+        ...p, list: p.list.map(todoli => {
 
-        // if (item.pinned)
-        //     // to remove item from pinned list
-        //     pinnedSetState(p => p.filter(i => i.uuid !== item.uuid))
-        // else
-        //     // add item to pinned list
-        //     pinnedSetState(p => [...p, item])
+            if (todoli.uuid === item.uuid) {
 
+                return { ...todoli, pinned: item.pinned ? 0 : 1 }
+            }
+            return todoli
+        })
+    }))
+
+    const updateTime = (e) => {
         todoSetState(p => ({
             ...p, list: p.list.map(todoli => {
 
                 if (todoli.uuid === item.uuid) {
 
-                    return { ...todoli, pinned: item.pinned ? 0 : 1 }
+                    return { ...todoli, time: e.target.value }
                 }
                 return todoli
             })
         }))
     }
+
 
 
 
@@ -153,11 +156,11 @@ const BlockOptions = ({ item }) => {
             </div>
 
             {/* time */}
-            <div className=" relative   border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap p-1 rounded bg-[#6A1B4D] ">
-                05 Jun 2020 18:45PM
-                {/* <div className="absolute"> */}
-
-                {/* </div> */}
+            <div className=" relative   border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap rounded bg-[#6A1B4D] ">
+                <input type="datetime-local"
+                    defaultValue={item.time}
+                    onChange={updateTime}
+                    className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0" />
             </div>
 
 
