@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-const TakePicture = ({ picURLRef }) => {
+const TakePicture = ({ picURLRef, close }) => {
     const video = useRef(null);
     const ref = useRef({ stream: null, canvas: null, mediaRecord: null, a_ref: null });
+    const [settings, setSettings] = useState({ width: 0, height: 0 });
 
     const [TakePicClick, setTakePicClick] = useState(false);
 
@@ -13,15 +14,21 @@ const TakePicture = ({ picURLRef }) => {
 
     const savePic = () => {
         ref.current.stream.getTracks().forEach(e => e.stop());
+        close(false)
         setTakePicClick(false);
     }
-    const takePic = () => {
-        let canvas = ref.current.canvas;
-        canvas.getContext('2d').drawImage(video.current, 0, 0, canvas.width, canvas.height);
-        let imgURL = canvas.toDataURL('image/jpeg')
-        console.log(imgURL);
-        picURLRef.current = imgURL
-        setTakePicClick(true)
+    const takePic = async () => {
+        if (!TakePicClick) {
+            let canvas = ref.current.canvas;
+            canvas.getContext('2d').drawImage(video.current, 0, 0, canvas.width, canvas.height);
+            let imgURL = canvas.toDataURL('image/jpeg')
+            picURLRef(imgURL)
+            ref.current.stream.getTracks().forEach(e => e.stop());
+            setTakePicClick(true)
+        } else {
+            await getMedia({ video: true })
+            setTakePicClick(false)
+        }
     }
 
     async function getMedia(constraints) {
@@ -29,6 +36,8 @@ const TakePicture = ({ picURLRef }) => {
 
         try {
             stream = await navigator.mediaDevices.getUserMedia(constraints);
+            const sett = stream.getTracks()[0].getSettings()
+            setSettings({ width: sett.width, height: sett.height })
             video.current.srcObject = stream;
             ref.current.stream = stream;
             /* use the stream */
@@ -63,14 +72,14 @@ const TakePicture = ({ picURLRef }) => {
     }
 
     return (
-        <div className="popup top-0 left-0 fixed w-screen h-screen bg-[#222222b1] flex justify-center items-center">
+        <div className="popup top-0 left-0 z-10 fixed w-full h-full bg-[#222222b1] flex justify-center items-center">
             <a ref={r => ref.current.a_ref = r} hidden></a>
-            <div className="vidCapture text-center shadow-slate-200">
-                <canvas width={320} height={240} style={{ visibility: TakePicClick ? "visible" : "hidden" }} ref={r => ref.current.canvas = r}></canvas>
-                <video ref={r => video.current = r} style={{ visibility: !TakePicClick ? "visible" : "hidden" }} autoPlay></video>
+            <div className="vidCapture text-center shadow[#fff]">
+                <canvas width={settings.width} height={settings.height} style={{ display: TakePicClick ? "block" : "none" }} ref={r => ref.current.canvas = r}></canvas>
+                <video ref={r => video.current = r} style={{ display: !TakePicClick ? "block" : "none" }} autoPlay></video>
 
-                <button className=' bg-slate-50 p-1 rounded ' onClick={takePic}>Take Picture</button>
-                <button className=' bg-slate-50 p-1 rounded ' onClick={savePic}>Save</button>
+                <button className=' bg-green-400 p-1 mt-2 rounded ' onClick={takePic}>{TakePicClick ? "Retake" : "Take Picture"}</button>
+                <button className=' bg-green-400 ml-3 mt-2 p-1 rounded ' onClick={savePic}>Save</button>
 
             </div>
         </div>

@@ -2,6 +2,9 @@ import { createContext } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from 'uuid';
 import BlockOptions from "./blockOptions";
+import Picture from "./Picture";
+import Audio from "./Audio";
+import Video from "./Video";
 import Text from "./Text";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
@@ -13,18 +16,17 @@ export const todoListSetstateContext = createContext([]);
 const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
 
     const addElement = (ele) => {
-        if (ele === "notes") {
-            setTodo(p => ({
-                ...p, list: [...p.list, {
-                    type: "text",
-                    // pinned: false,
-                    content: "",
-                    uuid: uuidv4(),
-                },]
-            }))
-        } else if (ele === "checkBox") {
-            setTodo(p => ({
-                ...p, list: [...p.list, {
+        let newEle = {
+            type: "text",
+            pinned: false,
+            content: "",
+            uuid: uuidv4(),
+        };
+        switch (ele) {
+            case "notes":
+                break;
+            case "checkBox":
+                newEle = {
                     type: "todo",
                     pinned: false,
                     uuid: uuidv4(),
@@ -33,10 +35,54 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
                         todo: "",
                         status: false
                     }],
-                }]
-            }))
-
+                }
+            case "pic":
+            case "aud":
+            case "vid":
+                newEle.type = ele
+                break;
+            default:
+                alert("Something went wrong");
+                return
         }
+
+        setTodo(p => ({ ...p, list: [...p.list, newEle] }))
+
+
+        // if (ele === "notes") {
+        //     setTodo(p => ({
+        //         ...p, list: [...p.list, {
+        //             type: "text",
+        //             // pinned: false,
+        //             content: "",
+        //             uuid: uuidv4(),
+        //         },]
+        //     }))
+        // } else if (ele === "checkBox") {
+        //     setTodo(p => ({
+        //         ...p, list: [...p.list, {
+        //             type: "todo",
+        //             pinned: false,
+        //             uuid: uuidv4(),
+        //             content: [{
+        //                 uuid: uuidv4(),
+        //                 todo: "",
+        //                 status: false
+        //             }],
+        //         }]
+        //     }))
+
+        // } else if (ele === "pic") {
+        //     setTodo(p => ({
+        //         ...p, list: [...p.list, {
+        //             type: "pic",
+        //             pinned: false,
+        //             uuid: uuidv4(),
+        //             content: "",
+        //         }]
+        //     }))
+
+        // } else if (ele === "aud") {}
     }
 
 
@@ -83,6 +129,9 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
                                     const selectCard = () => {
                                         if (item?.type === "text") return <Text item={item} />
                                         else if (item?.type === "todo") return <TodoList item={item} />
+                                        else if (item?.type === "pic") return <Picture item={item} />
+                                        else if (item?.type === "aud") return <Audio item={item} />
+                                        else if (item?.type === "vid") return <Video item={item} />
                                         else return <h1 className="text-white">Something went Wrong</h1>
                                     }
                                     return <Draggable draggableId={item.uuid} index={index} key={item.uuid}>
