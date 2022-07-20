@@ -165,7 +165,6 @@ const App = () => {
                                         setTodos(p => p.map(i => {
                                             if (i.uuid === v.uuid) {
                                                 const newValue = typeof param === "function" ? param(i) : param;
-                                                console.log(newValue);
                                                 update(DB.db, "notes", { ...newValue, list: newValue.list.map(i => i.uuid) });
                                                 newValue.list.forEach(i => update(DB.db, "todo", i))
                                                 return newValue

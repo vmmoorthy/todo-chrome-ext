@@ -13,7 +13,7 @@ const Todo = ({ setTodoList, item, Focus }) => {
     //Text area controller
     const rowCount = (s) => {
         let v = Number(s.match(/\n/g)?.length)
-        if (v === 0 || isNaN(v))
+        if (v === 0 || !isNaN(v))
             v = 1;
         else if (v > 3)
             v = 3;

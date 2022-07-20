@@ -36,6 +36,8 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
                         status: false
                     }],
                 }
+                break;
+            //eslint-disable-next-line
             case "pic":
             case "aud":
             case "vid":

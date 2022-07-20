@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useTextInput } from "../hooks/TextDebounce";
 import TakePicture from "./TakePicture";
 import { todoListSetstateContext } from "./TodoContainer";
@@ -7,7 +7,6 @@ const Picture = ({ item }) => {
     const { content: urlPic = "", uuid, desc } = item;
     const inputRef = useRef(null)
     const setTodo = useContext(todoListSetstateContext)
-    // const [urlPic, setUrlPic] = useState(content);
 
     const setUrlPic = (u) => setTodo(p => ({ ...p, list: p.list.map(i => i.uuid === uuid ? { ...i, content: u } : i) }))
 
@@ -15,10 +14,6 @@ const Picture = ({ item }) => {
 
     const [showImg, setShowImg] = useState(false);
     const [showCapture, setShowCapture] = useState(false);
-    // console.log(`urlPic: ${urlPic}`);
-    // useEffect(() => {
-    //     setUrlPic(picRef.current)
-    // }, [picRef.current]);
 
     const fileToBlobStore = e => {
         const file = e.target.files[0];
@@ -41,7 +36,7 @@ const Picture = ({ item }) => {
                 <img src={urlPic} className="shadow-md rounded shadow-[#fff9] h-4/5 border-gray-400 border-dashed p-1 bg-transparent border-[5px] " alt="img by user" />
             </div>}
 
-            <input  className="mt-2 bg-transparent rounded p-1 w-full border-[1px] border-solid " defaultValue={desc} placeholder="Description..." onChange={e => textFn(e.target.value)} type="text" />
+            <input className="mt-2 bg-transparent rounded p-1 w-full border-[1px] border-solid " defaultValue={desc} placeholder="Description..." onChange={e => textFn(e.target.value)} type="text" />
         </div>
             : <div className="option grid grid-flow-col w-full h-full items-center justify-evenly">
                 <label className="cursor-pointer" htmlFor={`${uuid}_file`}>
