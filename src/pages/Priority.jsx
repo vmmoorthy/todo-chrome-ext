@@ -80,7 +80,7 @@ export default Priority;
 export const ReadOnlyText = ({ content }) => {
     return (
         <div className="todoContainerWraper relative mt-5">
-            <div placeholder="hello" className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
+            <div dangerouslySetInnerHTML={{ __html: content.replaceAll("\n", "<br/>") }} placeholder="..." className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">
             </div>
         </div>
     );

@@ -12,10 +12,11 @@ import TodoContainer from './component/TodoContainer';
 import { connect, insert, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
 import Priority, { ReadOnlyList } from './pages/Priority';
 import Reminder from './pages/Reminder';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
-export const scrollToViewContext = createContext("");
+export const scrollToViewContext = createContext([]);
 
 const App = () => {
 
@@ -146,9 +147,39 @@ const App = () => {
         notesContainer.current.scrollLeft = notesContainer.current.scrollWidth
     }, [scrollLeft])
 
+
+    const handleDragEnd = r => {
+        console.log(r);
+        console.log(todos);
+
+        const { reason, destination, source, draggableId } = r;
+        if (reason !== "DROP" || !destination) return;
+
+        const newTodos = [...todos];
+
+        //getting sourceElement
+        const [srcEle] = newTodos.find(i => i.uuid === source.droppableId).list.splice(source.index, 1);
+        // adding to destination path
+        newTodos.find(i => i.uuid === destination.droppableId).list.splice(destination.index, 0, srcEle);
+
+        setTodos(newTodos);
+
+        //DB updation of source and destination
+        const newSourceTodo = newTodos.find(i => i.uuid === source.droppableId);
+        update(DB.db, "notes", { ...newSourceTodo, list: newSourceTodo.list.map(i => i.uuid) });
+
+        const newDestinationTodo = newTodos.find(i => i.uuid === destination.droppableId);
+        update(DB.db, "notes", { ...newDestinationTodo, list: newDestinationTodo.list.map(i => i.uuid) });
+
+
+    }
+
+
     return (
         //app container
-        <div className="bg-[#222222] w-full h-screen grid grid-flow-row grid-rows-[.8fr_9.2fr]">
+        <div
+            // onDragOverCapture={e=>console.log(e)}
+            className="bg-[#222222] w-full h-screen grid grid-flow-row grid-rows-[.8fr_9.2fr]">
             {/* app title container */}
             {/* {showRV && <RecordVideo />} */}
             <div className="w-full ">
@@ -159,17 +190,19 @@ const App = () => {
                 {/* todo list container */}
                 {page === "notes" &&
                     <div ref={r => notesContainer.current = r} className="grid  grid-flow-col m-1 p-4 gap-0 max-h-[99%] overflow-auto">
-                        <scrollToViewContext.Provider value={scrollToView}>
-                            {todos.map((v, i) => (<TodoContainer key={v.uuid} setTodo={(param) =>
-                                setTodos(p => p.map(i => {
-                                    if (i.uuid === v.uuid) {
-                                        const newValue = typeof param === "function" ? param(i) : param;
-                                        update(DB.db, "notes", { ...newValue, list: newValue.list.map(i => i.uuid) });
-                                        newValue.list.forEach(i => update(DB.db, "todo", i))
-                                        return newValue
-                                    }
-                                    return i
-                                }))} deleteTodo={deleteTodo} todo={v} />))}
+                        <scrollToViewContext.Provider value={[scrollToView, setScrollToView]}>
+                            <DragDropContext onDragEnd={handleDragEnd}>
+                                {todos.map((v, i) => (<TodoContainer key={v.uuid} setTodo={(param) =>
+                                    setTodos(p => p.map(i => {
+                                        if (i.uuid === v.uuid) {
+                                            const newValue = typeof param === "function" ? param(i) : param;
+                                            update(DB.db, "notes", { ...newValue, list: newValue.list.map(i => i.uuid) });
+                                            newValue.list.forEach(i => update(DB.db, "todo", i))
+                                            return newValue
+                                        }
+                                        return i
+                                    }))} deleteTodo={deleteTodo} todo={v} />))}
+                            </DragDropContext>
                         </scrollToViewContext.Provider>
                     </div>}
                 {page === "reminder" && <Reminder />}

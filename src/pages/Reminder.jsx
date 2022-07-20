@@ -16,7 +16,7 @@ const Reminder = () => {
         (async () => {
             const list = await getAll(DB.db, "todo")
             setListOfTask(list)
-            changeOrder({ e: { target: { value: "asc" } } })
+            setReminderList(list.filter(t => t.time).sort((b, a) => (new Date(a.time)) - (new Date(b.time))))
         })()
     }, []);
 
@@ -58,7 +58,7 @@ const ReadOnlyText = ({ content, time }) => {
                     <input type="datetime-local"
                         defaultValue={time}
                         disabled
-                        className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0 text-center"  />
+                        className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0 text-center" />
                 </div>
             </div>
             <div placeholder="hello" className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
@@ -91,7 +91,7 @@ const ReadOnlyTodo = ({ content, time }) => {
                     <input type="datetime-local"
                         defaultValue={time}
                         disabled
-                        className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0 text-center"  />
+                        className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0 text-center" />
                 </div>
             </div>
             <div className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">

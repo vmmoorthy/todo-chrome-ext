@@ -9,13 +9,14 @@ import { priorityContext } from "../context/priorityContext";
 
 const BlockOptions = ({ item }) => {
     const todoSetState = useContext(todoListSetstateContext)
-    const scrollToView = useContext(scrollToViewContext)
+    const [scrollToView, setScrollToView] = useContext(scrollToViewContext)
 
     const scVRef = useRef(null)
 
     if (scrollToView === item.uuid) {
         scVRef.current?.parentElement.classList.add('scrollFocus')
         scVRef.current?.scrollIntoView({ behavior: 'smooth' })
+        setScrollToView(null)
     }
 
     const [priorityList, setPriorityList] = useContext(priorityContext)
@@ -90,6 +91,7 @@ const BlockOptions = ({ item }) => {
 
 
 
+    const dragStart = e => console.log(e);
 
     return (
         <div contentEditable={false} ref={r => scVRef.current = r} className="blockOptions opacity-20 transition-opacity hover:opacity-100 grid grid-flow-col items-end absolute z-10  top-[-1rem] w-full ">
@@ -154,9 +156,11 @@ const BlockOptions = ({ item }) => {
                     </div>
                 </div>
             </div>
-
+            <div
+                //  onDragStart={dragStart}
+                className="drag select-text border-white border-solid border-[1px] cursor-move hover:bg-[#6D385A] time text-[1rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap px-1 py-0 leading-5 rounded bg-[#6A1B4D] "> : : : </div>
             {/* time */}
-            <div className=" relative   border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap rounded bg-[#6A1B4D] ">
+            <div className=" relative   border-white border-solid border-[1px] cursor-pointer hover:bg-[#6D385A] time text-[.75rem] w-min h-min max-w-[8.5rem] text-center max-h-6 whitespace-nowrap rounded bg-[#6A1B4D]  ">
                 <input type="datetime-local"
                     defaultValue={item.time}
                     onChange={updateTime}

@@ -1,4 +1,5 @@
 import { createContext, useEffect, useRef, useState } from "react";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import { update } from "storage_engine";
 import { v4 as uuidv4 } from 'uuid';
 import { DB } from "../App";
@@ -10,6 +11,8 @@ import TodoList from "./TodoList";
 
 
 export const todoListSetstateContext = createContext([]);
+
+let dragStartElement = null
 
 const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
 
@@ -76,10 +79,34 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
         }
     }
 
-
+    // const dragStart = e => {
+    //     console.log(e);
+    //     dragStartElement = e.target
+    // }
+    // const dragEnd = e => {
+    //     // dragStartElement.style.backgroundColor = "rgba(255,255,255,0.1)";
+    //     dragStartElement.style.position = "relative";
+    //     dragStartElement.style.top = 0 + "px";
+    //     dragStartElement.style.left = 0 + "px";
+    //     dragStartElement.style.zIndex = "6";
+    // }
 
     return (
-        <div className="todoContainer w-[23rem] h-full relative">
+        <div className="todoContainer w-[23rem] h-full relative"
+        // onDragOver={e => {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     //stop browsers default drag behavior
+
+        //     e.dataTransfer.dropEffect = "move";
+        //     e.dataTransfer.effectAllowed = "move";
+        //     console.log(e)
+        //     dragStartElement.style.minWidth = "19rem";
+        //     dragStartElement.style.position = "fixed";
+        //     dragStartElement.style.top = e.pageY + "px";
+        //     dragStartElement.style.left = e.pageX + "px";
+        //     dragStartElement.style.zIndex = "6";}} 
+        >
             <div className="addToolsModel bg-[#6A1B4D] absolute p-2 rounded-[8px] right-[-0.1rem] top-4 flex flex-col gap-4">
                 {/* Notes */}
                 <svg onClick={() => addElement("notes")} className='cursor-pointer hover:bg-sky-300 rounded' width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,30 +141,39 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
 
                 {/* <div className="listContainer"> */}
                 <todoListSetstateContext.Provider value={setTodo}>
-                    <div className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto ">
-                        <PriorityContext>
-                            {todo.list.map((item) => {
-                                const selectCard = () => {
-                                    if (item?.type === "text") return <Text item={item} />
-                                    else if (item?.type === "todo") return <TodoList item={item} />
-                                    else return <h1 className="text-white">Something went Wrong</h1>
-                                }
-                                return <div key={item.uuid} className="todoContainerWraper relative mt-5">
-                                    <BlockOptions item={item} />
-                                    {selectCard()}
+                    <PriorityContext>
+                        <Droppable droppableId={todo.uuid}>
+                            {provided => (
+                                <div {...provided.droppableProps} ref={provided.innerRef} className="list w-full h-[36rem] p-1 rounded-[20px] rounded-t-none overflow-auto " >
+                                    {todo.list.map((item, index) => {
+                                        const selectCard = () => {
+                                            if (item?.type === "text") return <Text item={item} />
+                                            else if (item?.type === "todo") return <TodoList item={item} />
+                                            else return <h1 className="text-white">Something went Wrong</h1>
+                                        }
+                                        return <Draggable draggableId={item.uuid} index={index} key={item.uuid}>
+                                            {provided => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className=" todoContainerWraper relative mt-5" >
+                                                    <BlockOptions item={item} />
+                                                    {selectCard()}
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    })}
+                                    {provided.placeholder}
                                 </div>
-                            })}
-                        </PriorityContext>
-                        {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
+                            )}
+                        </Droppable>
+                    </PriorityContext>
+                    {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
                 <Audio />
                 <Video /> */}
-                        {/* <div className="text"></div>
+                    {/* <div className="text"></div>
                 <div className="todoList"></div>
                 <div className="pic"></div>
                 <div className="aud"></div>
                 <div className="vid"></div> */}
 
-                    </div>
                 </todoListSetstateContext.Provider>
                 {/* </div> */}
             </div >
