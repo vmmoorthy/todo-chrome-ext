@@ -54,7 +54,7 @@ const TakePicture = ({ picURLRef, close }) => {
                 <video ref={r => video.current = r} style={{ display: !TakePicClick ? "block" : "none" }} autoPlay></video>
 
                 <button className=' bg-green-400 p-1 mt-2 rounded ' onClick={takePic}>{TakePicClick ? "Retake" : "Take Picture"}</button>
-                <button className=' bg-green-400 ml-3 mt-2 p-1 rounded ' onClick={savePic}>Save</button>
+                <button className=' bg-green-400 ml-3 mt-2 p-1 rounded ' onClick={savePic}>Exit</button>
 
             </div>
         </div>
