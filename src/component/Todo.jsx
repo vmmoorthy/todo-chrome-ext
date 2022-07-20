@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTextInput } from "../hooks/TextDebounce";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,14 +7,13 @@ const Todo = ({ setTodoList, item, Focus }) => {
 
     const removeTodo = () => setTodoList(p => p.filter(d => item.uuid !== d.uuid));
 
-
     const todoText = useTextInput((e) => {
         setTodoList(p => p.map((d, i) => d.uuid === item.uuid ? ({ ...d, todo: e.target.value }) : d))
     });
     //Text area controller
     const rowCount = (s) => {
         let v = Number(s.match(/\n/g)?.length)
-        if (v === 0 || v === NaN)
+        if (v === 0 || isNaN(v))
             v = 1;
         else if (v > 3)
             v = 3;
@@ -32,7 +30,6 @@ const Todo = ({ setTodoList, item, Focus }) => {
             style={{ resize: "none" }}
             defaultValue={item.todo}
             placeholder="Todo..."
-            // onInput={e=>console.log(e.target.value)}
             autoFocus={lfocus === item.uuid}
             onKeyDown={(e) => {
                 if (e.key === "Enter" && e.ctrlKey) {

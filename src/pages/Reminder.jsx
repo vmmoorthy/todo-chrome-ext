@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
-import { getAll, getAllIndexValue } from "storage_engine";
+import { getAll } from "storage_engine";
 import { DB } from "../App";
 
 const Reminder = () => {
 
     const [reminderList, setReminderList] = useState([])
-    // const [selctedPriorityIndex, setSelctedPriorityIndex] = useState("-1");
     const [listOfTask, setListOfTask] = useState([]);
-
-
-
-    // const getPriorityList = (key) => getAllIndexValue(DB.db, "todo", "priority", key)
 
     useEffect(() => {
         (async () => {
@@ -26,11 +21,6 @@ const Reminder = () => {
         else
             setReminderList(listOfTask.filter(t => t.time).sort((a, b) => (new Date(a.time)) - (new Date(b.time))))
     }
-
-    // useEffect(() => {
-    //     if (selctedPriorityIndex !== "-1")
-    //         (async () => setListOfTask(await getPriorityList(reminderList.find(d => d.uuid === selctedPriorityIndex)?.uuid)))()
-    // }, [selctedPriorityIndex]);
 
     return (
         <div className="flex flex-col items-center justify-center h-full">
@@ -61,7 +51,7 @@ const ReadOnlyText = ({ content, time }) => {
                         className="text-[.63rem] cursor-pointer bg-transparent w-[8.3rem] px-[0.5px] py-1 top-[-0.2rem] left-0 text-center" />
                 </div>
             </div>
-            <div placeholder="hello" className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">{content.replaceAll("\n", "<br/>")}
+            <div dangerouslySetInnerHTML={{ __html: content.replaceAll("\n", "<br/>") }} className="text relative text-white bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2 empty:before:content-['Notes...'] before:text-[#fff8] ">
             </div>
         </div>
     );
@@ -101,8 +91,6 @@ const ReadOnlyTodo = ({ content, time }) => {
                         <input type="checkbox" checked={item.status} disabled />
 
                         <div
-
-                            // contentEditable
                             disabled
                             placeholder="Todo..."
                             className="ml-2 w-full text-white  bg-transparent " >{item.todo}</div>

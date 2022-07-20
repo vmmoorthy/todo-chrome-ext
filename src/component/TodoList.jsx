@@ -11,14 +11,15 @@ const TodoList = ({ item, cb }) => {
 
     useEffect(() => {
         setTodo(p => ({ ...p, list: p.list.map(i => i.uuid === item.uuid ? { ...i, content: todoList } : i) }))
+        // eslint-disable-next-line
     }, [todoList]);
 
     return (
-            <div onMouseOver={e => e.target.parentElement.classList.remove('scrollFocus')} className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
-                {todoList.map((item) => (
-                    <Todo item={item} setTodoList={setTodoList} Focus={Focus} key={item.uuid} />
-                ))}
-            </div>
+        <div onMouseOver={e => e.target.parentElement.classList.remove('scrollFocus')} className="todoList bg-[#222] border-[1px] border-solid border-white w-full min-h-[5rem] p-1 rounded-[10px] mb-2">
+            {todoList.map((item) => (
+                <Todo item={item} setTodoList={setTodoList} Focus={Focus} key={item.uuid} />
+            ))}
+        </div>
     );
 }
 

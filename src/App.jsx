@@ -1,18 +1,16 @@
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
-import TodoList from "./component/TodoList";
-import Text from "./component/Text";
-import Picture from "./component/Picture";
-import Audio from "./component/Audio";
-import Video from "./component/Video";
+// import Picture from "./component/Picture";
+// import Audio from "./component/Audio";
+// import Video from "./component/Video";
+// import RecordVideo from './component/RecordVideo';
 import { createContext, useEffect, useRef, useState } from 'react';
-import RecordVideo from './component/RecordVideo';
-import TextInput from './component/TextInput';
 import TodoContainer from './component/TodoContainer';
-import { connect, insert, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
+import { connect, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
 import Priority, { ReadOnlyList } from './pages/Priority';
 import Reminder from './pages/Reminder';
 import { DragDropContext } from 'react-beautiful-dnd';
+import PriorityContext from './context/priorityContext';
 
 export let DB = { db: null /*{ transaction: (d) => console.log("nothing to do ", d) }*/ };
 
@@ -25,37 +23,12 @@ const App = () => {
     const [pinnedList, setPinnedList] = useState([]);
     const [scrollToView, setScrollToView] = useState(null);
 
-    const [todos, setTodos] = useState(() => [
-        //     { //master model for todo list
-        //     title: "",
-        //     uuid: "0" + uuidv4(), // 0 added before uuid to maintain the order
-        //     list: [
-        //         {
-        //             type: "text",// text||todo||pic||aud||video
-        //             priority: "", //uuid of priority
-        //             content: "",
-        //             uuid: uuidv4(),
-        //         },
-        //         {
-        //             type: "todo",
-        //             priority: "", //uuid of priority
-        //             uuid: uuidv4(),
-        //             content: [{
-        //                 todo: "",
-        //                 status: false,
-        //                 uuid: uuidv4()
-        //             }],
-        //         }
-        //     ]
-        // }
-    ]); //each object represents a record in 'notes' store
+    const [todos, setTodos] = useState(() => []); //each object represents a record in 'notes' store
 
     const notesContainer = useRef(null);
 
-
     const deleteTodo = (uuid) => {
         let listOfTodo = todos.find(i => i.uuid === uuid).list.map(i => i.uuid);
-
 
         listOfTodo.forEach(i => {
             deleteData(DB.db, "todo", i);
@@ -67,7 +40,6 @@ const App = () => {
     }
 
     const getPinnedList = async () => setPinnedList(await getAllIndexValue(DB.db, "todo", "pinned", 1))
-
 
     //get the data from IDB first time only
     useEffect(() => {
@@ -149,10 +121,8 @@ const App = () => {
 
 
     const handleDragEnd = r => {
-        console.log(r);
-        console.log(todos);
 
-        const { reason, destination, source, draggableId } = r;
+        const { reason, destination, source } = r;
         if (reason !== "DROP" || !destination) return;
 
         const newTodos = [...todos];
@@ -171,14 +141,12 @@ const App = () => {
         const newDestinationTodo = newTodos.find(i => i.uuid === destination.droppableId);
         update(DB.db, "notes", { ...newDestinationTodo, list: newDestinationTodo.list.map(i => i.uuid) });
 
-
     }
 
 
     return (
         //app container
         <div
-            // onDragOverCapture={e=>console.log(e)}
             className="bg-[#222222] w-full h-screen grid grid-flow-row grid-rows-[.8fr_9.2fr]">
             {/* app title container */}
             {/* {showRV && <RecordVideo />} */}
@@ -192,16 +160,18 @@ const App = () => {
                     <div ref={r => notesContainer.current = r} className="grid  grid-flow-col m-1 p-4 gap-0 max-h-[99%] overflow-auto">
                         <scrollToViewContext.Provider value={[scrollToView, setScrollToView]}>
                             <DragDropContext onDragEnd={handleDragEnd}>
-                                {todos.map((v, i) => (<TodoContainer key={v.uuid} setTodo={(param) =>
-                                    setTodos(p => p.map(i => {
-                                        if (i.uuid === v.uuid) {
-                                            const newValue = typeof param === "function" ? param(i) : param;
-                                            update(DB.db, "notes", { ...newValue, list: newValue.list.map(i => i.uuid) });
-                                            newValue.list.forEach(i => update(DB.db, "todo", i))
-                                            return newValue
-                                        }
-                                        return i
-                                    }))} deleteTodo={deleteTodo} todo={v} />))}
+                                <PriorityContext>
+                                    {todos.map((v, i) => (<TodoContainer key={v.uuid} setTodo={(param) =>
+                                        setTodos(p => p.map(i => {
+                                            if (i.uuid === v.uuid) {
+                                                const newValue = typeof param === "function" ? param(i) : param;
+                                                update(DB.db, "notes", { ...newValue, list: newValue.list.map(i => i.uuid) });
+                                                newValue.list.forEach(i => update(DB.db, "todo", i))
+                                                return newValue
+                                            }
+                                            return i
+                                        }))} deleteTodo={deleteTodo} todo={v} />))}
+                                </PriorityContext>
                             </DragDropContext>
                         </scrollToViewContext.Provider>
                     </div>}
@@ -257,13 +227,6 @@ const App = () => {
                         </svg>
                         <div className="fixed">
                             <div className="pinedListDropdown dropDown bg-[#E07C24] border-2 border-solid border-white w-[25rem] p-2 drop-shadow-2xl rounded  right-[0rem]  absolute top-[0rem]  max-h-[21rem] overflow-auto ">
-                                {/* 
-                                // direct render of the pinned list
-                                (() => {
-                                    let arr = []
-                                    todos.forEach(todo => arr = [...arr, ...todo.list.filter(i => i.pinned === 1)])
-                                    return arr
-                                })() */}
                                 <ReadOnlyList focusToElement={setScrollToView} list={pinnedList} />
                             </div>
                         </div>

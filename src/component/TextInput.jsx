@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useTextInput } from "../hooks/TextDebounce";
 
 const TextInput = ({ title, cb }) => {
@@ -14,7 +14,6 @@ const TextInput = ({ title, cb }) => {
         selection.addRange(range);
         ele.current.focus();
     })
-
 
     return (
         <h1 suppressContentEditableWarning
