@@ -1,9 +1,5 @@
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
-// import Picture from "./component/Picture";
-// import Audio from "./component/Audio";
-// import Video from "./component/Video";
-// import RecordVideo from './component/RecordVideo';
 import { createContext, useEffect, useRef, useState } from 'react';
 import TodoContainer from './component/TodoContainer';
 import { connect, getAll, update, deleteData, getAllIndexValue } from 'storage_engine'
@@ -149,7 +145,6 @@ const App = () => {
         <div
             className="bg-[#222222] w-full h-screen grid grid-flow-row grid-rows-[.8fr_9.2fr]">
             {/* app title container */}
-            {/* {showRV && <RecordVideo />} */}
             <div className="w-full ">
                 {/* head */}
 

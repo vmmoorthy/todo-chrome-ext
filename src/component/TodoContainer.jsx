@@ -49,42 +49,6 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
         }
 
         setTodo(p => ({ ...p, list: [...p.list, newEle] }))
-
-
-        // if (ele === "notes") {
-        //     setTodo(p => ({
-        //         ...p, list: [...p.list, {
-        //             type: "text",
-        //             // pinned: false,
-        //             content: "",
-        //             uuid: uuidv4(),
-        //         },]
-        //     }))
-        // } else if (ele === "checkBox") {
-        //     setTodo(p => ({
-        //         ...p, list: [...p.list, {
-        //             type: "todo",
-        //             pinned: false,
-        //             uuid: uuidv4(),
-        //             content: [{
-        //                 uuid: uuidv4(),
-        //                 todo: "",
-        //                 status: false
-        //             }],
-        //         }]
-        //     }))
-
-        // } else if (ele === "pic") {
-        //     setTodo(p => ({
-        //         ...p, list: [...p.list, {
-        //             type: "pic",
-        //             pinned: false,
-        //             uuid: uuidv4(),
-        //             content: "",
-        //         }]
-        //     }))
-
-        // } else if (ele === "aud") {}
     }
 
 
@@ -122,7 +86,6 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
                 {/* Title Edit box */}
                 <TextInput cb={v => setTodo(p => ({ ...p, title: v }))} title={todo.title} />
 
-                {/* <div className="listContainer"> */}
                 <todoListSetstateContext.Provider value={setTodo}>
                     <Droppable droppableId={todo.uuid}>
                         {provided => (
@@ -150,16 +113,6 @@ const TodoContainer = ({ todo, setTodo, deleteTodo }) => {
                         )}
                     </Droppable>
                 </todoListSetstateContext.Provider>
-                {/* <Picture url={"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80"} />
-                <Audio />
-                <Video /> */}
-                {/* <div className="text"></div>
-                <div className="todoList"></div>
-                <div className="pic"></div>
-                <div className="aud"></div>
-                <div className="vid"></div> */}
-
-                {/* </div> */}
             </div >
         </div >
     );
